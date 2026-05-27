@@ -8,6 +8,7 @@ class APIDependencyMonitor:
         self.requests_log = []
         self.org_id = org_id
         self.project_name = project_name
+        self.results = []
 
     def request(self, flow: http.HTTPFlow):
         raw_http_request = self._format_request_as_raw_http(flow.request)
@@ -28,6 +29,6 @@ class APIDependencyMonitor:
                 data=raw_http_request,
                 headers={"Content-Type": "text/plain"},
             )
-            print(f"{raw_http_request.splitlines()[0]} -> {response.text}")
+            self.results.append(f"{raw_http_request.splitlines()[0]} -> {response.text}")
         except Exception as e:
-            print(f"Validation error: {e}")
+            self.results.append(f"{raw_http_request.splitlines()[0]} -> Error occurred while validating request")

@@ -13,10 +13,13 @@ async def start_proxy_and_monitor_traffic(port: int, org_id: int, project_name: 
     print(f"Monitor started on port {port}. Press Ctrl+C to stop.")
     try:
         await mitmproxy_engine.run()
-    except KeyboardInterrupt:
+    except (KeyboardInterrupt, asyncio.CancelledError):
         mitmproxy_engine.shutdown()
 
     print(f"\nCaptured {len(traffic_monitor.requests_log)} requests.")
+    print("Validation Results:")
+    for result in traffic_monitor.results:
+        print(result)
 
 def parse_args_and_run():
     parser = argparse.ArgumentParser(description="API Dependency Monitor")
@@ -25,7 +28,10 @@ def parse_args_and_run():
     parser.add_argument("--projectName", type=str, required=True, help="Project Name")
     args = parser.parse_args()
 
-    asyncio.run(start_proxy_and_monitor_traffic(args.port, args.orgId, args.projectName))
+    try:
+        asyncio.run(start_proxy_and_monitor_traffic(args.port, args.orgId, args.projectName))
+    except KeyboardInterrupt:
+        pass
 
 if __name__ == "__main__":
     parse_args_and_run()
