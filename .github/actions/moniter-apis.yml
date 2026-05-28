@@ -2,10 +2,6 @@ name: moniter-action
 
 on:
   workflow_dispatch:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
     inputs:
       orgId:
         description: 'Organization ID'
@@ -17,6 +13,10 @@ on:
         description: 'Proxy port'
         required: true
         default: '8080'
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   build:
