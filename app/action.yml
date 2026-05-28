@@ -1,0 +1,22 @@
+name: 'API Dependency Monitor'
+description: 'Monitor and validate API dependencies against an OpenAPI spec'
+inputs:
+  orgId:
+    description: 'Organization ID'
+    required: true
+  projectName:
+    description: 'Project name'
+    required: true
+  port:
+    description: 'Proxy port'
+    required: true
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - --orgId
+    - ${{ inputs.orgId }}
+    - --projectName
+    - ${{ inputs.projectName }}
+    - --port
+    - ${{ inputs.port }}
