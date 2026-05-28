@@ -1,8 +1,15 @@
 name: api-dep-man-moniter
 description: 'Monitor and Verify api dependencies'
-runs :
+runs:
   using: 'docker'
   image: 'Dockerfile'
+  args:
+    - --port
+    - ${{ inputs.port }}
+    - --orgId
+    - ${{ inputs.orginizationId }}
+    - --projectName
+    - ${{ inputs.projectName }}
 inputs:
   orginizationId:
     description: 'The organization id of the api dependencies'
