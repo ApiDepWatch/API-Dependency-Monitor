@@ -8,4 +8,4 @@ RUN pip install --no-cache-dir -r requirments.txt
 COPY moniter.py .
 COPY api-dep-moniter.py .
 
-ENTRYPOINT ["python", "api-dep-moniter.py"]
+ENTRYPOINT ["python", "/app/api-dep-moniter.py"]
