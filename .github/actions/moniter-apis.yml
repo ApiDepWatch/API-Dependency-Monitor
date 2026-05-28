@@ -2,6 +2,10 @@ name: moniter-action
 
 on:
   workflow_dispatch:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
     inputs:
       orgId:
         description: 'Organization ID'
