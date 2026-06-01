@@ -1,0 +1,5 @@
+mitmproxy==12.2.3
+requests==2.34.2
+pytest==8.3.5
+responses==0.25.7
+python-dotenv==1.1.0

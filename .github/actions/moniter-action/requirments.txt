@@ -1,2 +1,0 @@
-mitmproxy==12.2.3
-requests==2.34.2

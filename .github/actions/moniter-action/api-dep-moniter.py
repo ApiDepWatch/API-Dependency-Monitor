@@ -3,6 +3,7 @@ import argparse
 from mitmproxy import options
 from mitmproxy.tools.dump import DumpMaster
 from moniter import APIDependencyMonitor
+from dotenv import load_dotenv
 
 async def start_proxy_and_monitor_traffic(port: int, org_id: int, project_name: str):
     mitmproxy_config = options.Options(listen_port=port)
@@ -34,4 +35,5 @@ def parse_args_and_run():
         pass
 
 if __name__ == "__main__":
+    load_dotenv()
     parse_args_and_run()

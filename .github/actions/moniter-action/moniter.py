@@ -1,10 +1,13 @@
+import os
 import requests as http_requests
 from mitmproxy import http
+from dotenv import load_dotenv
 
-BACKEND_URL = "https://localhost:8080/API-Management-Server"
+load_dotenv()
+BACKEND_URL = os.getenv("BACKEND_URL")
 
 class APIDependencyMonitor:
-    def __init__(self, org_id: int = None, project_name: str = None):
+    def __init__(self, org_id: int, project_name: str):
         self.requests_log = []
         self.org_id = org_id
         self.project_name = project_name
