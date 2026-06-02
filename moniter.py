@@ -42,6 +42,8 @@ class APIDependencyMonitor:
 
 
     def done(self):
+        print(f"\nCaptured {len(self.requests_log)} requests.")
+        print("Validation Results:")
         passed = sum(1 for r in self.results if "✅ Request matches spec." in r)
         failed = len(self.results) - passed
         print(json.dumps({
@@ -50,28 +52,3 @@ class APIDependencyMonitor:
             "failed": failed,
             "details": self.results
         }), flush=True)
-
-def output_results_and_exit(traffic_monitor):
-    print(f"\nCaptured {len(traffic_monitor.requests_log)} requests.")
-    print("Validation Results:")
-
-    passed = 0
-    failed = 0
-    for verification_result in traffic_monitor.results:
-        if "✅ Request matches spec." in verification_result:
-            passed += 1
-        else:
-            failed += 1
-
-    results = {
-        "passed": passed,
-        "failed": failed,
-        "details": traffic_monitor.results
-    }
-
-    print(json.dumps(results))
-
-    if results["failed"] > 0:
-        sys.exit(1)
-    else:
-        sys.exit(0)

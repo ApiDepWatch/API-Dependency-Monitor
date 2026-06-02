@@ -14,9 +14,13 @@ async def start_proxy_and_monitor_traffic(port: int, org_id: int, project_name: 
 
     print(f"Monitor started on port {port}. Press Ctrl+C to stop.")
     try:
+        print(1)
         await mitmproxy_engine.run()
+        print(2)
     except (KeyboardInterrupt, asyncio.CancelledError):
+        print(3)
         mitmproxy_engine.shutdown()
+        print(4)
 
 
 def parse_args_and_run():
@@ -25,9 +29,13 @@ def parse_args_and_run():
     project_name = os.getenv("PROJECT_NAME")
 
     try:
+        print(5)
         asyncio.run(start_proxy_and_monitor_traffic(port, org_id, project_name))
+        print(6)
     except KeyboardInterrupt:
+        print(7)
         pass
+        print(8)
 
 if __name__ == "__main__":
     load_dotenv()
