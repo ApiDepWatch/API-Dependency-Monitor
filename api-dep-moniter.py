@@ -21,7 +21,7 @@ async def start_proxy_and_monitor_traffic(port: int, org_id: int, project_name: 
         mitmproxy_engine.shutdown()
 
         for r in traffic_monitor.results:
-            if "✅" not in r:
+            if "✅" in r:
                 sys.exit(1)
         sys.exit(0)
 
