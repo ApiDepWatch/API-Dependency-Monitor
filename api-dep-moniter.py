@@ -18,8 +18,6 @@ async def start_proxy_and_monitor_traffic(port: int, org_id: int, project_name: 
         print("SIGINT received, shutting down gracefully...")
         sys.stdout.flush()
         traffic_monitor.output_results()
-        mitmproxy_engine.shutdown()
-
         for r in traffic_monitor.results:
             if "✅" in r:
                 sys.exit(1)
