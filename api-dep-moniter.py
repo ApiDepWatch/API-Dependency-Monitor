@@ -18,19 +18,19 @@ async def start_proxy_and_monitor_traffic(port: int, org_id: int, project_name: 
         print("SIGINT received, shutting down gracefully...")
         sys.stdout.flush()
         traffic_monitor.output_results()
+
+        exit_code = 0
         for r in traffic_monitor.results:
             if "✅" not in r:
-                with open("exit_code.txt", "w") as f:
-                    f.write("1")
-                sys.exit(1)
+                exit_code = 1
 
         with open("exit_code.txt", "w") as f:
-            f.write("0")
-        sys.exit(0)
+            f.write(str(exit_code))
+        sys.exit(exit_code)
 
     signal.signal(signal.SIGINT, handle_sigint)
 
-    print(f"Monitor started on port {port}. Press Ctrl+C to stop.")
+    print(f"Monitor started on port {port}")
     await mitmproxy_engine.run()
 
 
