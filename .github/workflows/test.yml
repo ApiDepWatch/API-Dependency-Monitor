@@ -52,7 +52,14 @@ jobs:
         run: |
           PID=$(cat moniter_pid.txt)
           kill -SIGINT $PID || true
-          tail --pid=$PID -f /dev/null
+          timeout 5 tail --pid=$PID -f /dev/null || true
+          if kill -0 $PID 2>/dev/null; then
+            kill -SIGTERM $PID || true
+            timeout 5 tail --pid=$PID -f /dev/null || true
+          fi
+          if kill -0 $PID 2>/dev/null; then
+            kill -SIGKILL $PID || true
+          fi
 
       - name: Check proxy process is dead
         if: always()
