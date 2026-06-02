@@ -28,15 +28,13 @@ class APIDependencyMonitor:
 
     def _validate_request_against_openapi_spec(self, raw_http_request: str):
         try:
-            response = "✅ Request matches spec."
-            """response = http_requests.post(
+            response = http_requests.post(
                 f"{BACKEND_URL}/IsRequestValid",
                 params={"orgId": self.org_id, "projectName": self.project_name},
                 data=raw_http_request,
                 headers={"Content-Type": "text/plain"},
-            )"""
-            # self.results.append(f"{raw_http_request.splitlines()[0]} -> {response.text}")
-            self.results.append(f"{raw_http_request.splitlines()[0]} -> {response}")
+            )
+            self.results.append(f"{raw_http_request.splitlines()[0]} -> {response.text}")
         except Exception as e:
             self.results.append(f"{raw_http_request.splitlines()[0]} -> Error occurred while validating request")
 
