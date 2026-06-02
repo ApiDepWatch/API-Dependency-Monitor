@@ -1,5 +1,4 @@
 import os
-import sys
 import json
 import requests as http_requests
 from mitmproxy import http

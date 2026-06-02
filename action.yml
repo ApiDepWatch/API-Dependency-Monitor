@@ -5,10 +5,6 @@ inputs:
     description: 'Port to run the proxy server on'
     required: true
     default: '8080'
-  org_id:
-    description: 'Organization ID for API management backend'
-    required: true
-    default: '123'
   project_name:
     description: 'Project name for API management backend'
     required: true
@@ -25,8 +21,12 @@ runs:
       shell: bash
       env:
         PORT: ${{ inputs.port }}
-        ORG_ID: ${{ inputs.org_id }}
         PROJECT_NAME: ${{ inputs.project_name }}
+        ORG_ID: ${{ github.repository_owner_id }}
+        ORG_NAME: ${{ github.repository_owner }}
+        USER_ID: ${{ github.actor_id }}
+        USERNAME: ${{ github.actor }}
+        REPO_NAME: ${{ github.repository }}
     - run: sleep 5
       shell: bash
     - run: |
