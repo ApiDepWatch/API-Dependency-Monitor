@@ -61,6 +61,17 @@ jobs:
             kill -SIGKILL $PID || true
           fi
 
+      - name: Print proxy output
+        if: always()
+        run: |
+          echo ""
+          echo "=================================================="
+          echo "  PROXY OUTPUT"
+          echo "=================================================="
+          cat /tmp/proxy.log
+          echo "=================================================="
+          echo ""
+
       - name: Check proxy process is dead
         if: always()
         run: |
