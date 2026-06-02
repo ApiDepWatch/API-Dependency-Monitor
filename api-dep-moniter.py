@@ -20,6 +20,8 @@ async def start_proxy_and_monitor_traffic(port: int, org_id: int, project_name: 
         traffic_monitor.output_results()
         for r in traffic_monitor.results:
             if "✅" in r:
+                print("FUCK")
+
                 sys.exit(1)
         sys.exit(0)
 
