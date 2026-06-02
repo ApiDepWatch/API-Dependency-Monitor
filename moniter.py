@@ -42,7 +42,14 @@ class APIDependencyMonitor:
 
 
     def done(self):
-        output_results_and_exit(self)
+        passed = sum(1 for r in self.results if "✅ Request matches spec." in r)
+        failed = len(self.results) - passed
+        print(json.dumps({
+            "captured": len(self.requests_log),
+            "passed": passed,
+            "failed": failed,
+            "details": self.results
+        }), flush=True)
 
 def output_results_and_exit(traffic_monitor):
     print(f"\nCaptured {len(traffic_monitor.requests_log)} requests.")
