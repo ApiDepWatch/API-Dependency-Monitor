@@ -31,5 +31,5 @@ jobs:
         if: always()
         run: |
           pkill -SIGINT -f api-dep-moniter.py || true
-          sleep 2
+          timeout 10 bash -c 'while pgrep -f api-dep-moniter.py > /dev/null; do sleep 0.5; done' || true
           cat /tmp/proxy.log
