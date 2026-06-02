@@ -1,10 +1,14 @@
-import responses as responses_mock
+import sys
 import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+import pytest
+import responses as responses_mock
 from dotenv import load_dotenv
 
 load_dotenv()  # must run before moniter is imported so its module-level BACKEND_URL is set
 
-from moniter import APIDependencyMonitor
+from moniter import APIDependencyMonitor, output_results_and_exit
 BACKEND_URL = os.getenv("BACKEND_URL")
 orgId = 1
 projectName = "test-project"
@@ -132,4 +136,48 @@ def test_validate_request_records_multiple_valid_results():
     assert len(monitor.results) == number_of_requests_made
 
     for i in range(number_of_requests_made):
-        assert "✅ Request matches spec." in monitor.results[i] 
+        assert "✅ Request matches spec." in monitor.results[i]
+
+
+# ==============================================================================
+# output_results_and_exit tests
+# ==============================================================================
+
+def test_output_exits_0_when_all_passed():
+    monitor = APIDependencyMonitor(org_id=orgId, project_name=projectName)
+    monitor.results = [
+        "GET https://example.com HTTP/1.1 -> ✅ Request matches spec.",
+        "POST https://example.com HTTP/1.1 -> ✅ Request matches spec.",
+    ]
+    with pytest.raises(SystemExit) as exc:
+        output_results_and_exit(monitor)
+    assert exc.value.code == 0
+
+
+def test_output_exits_1_when_any_failed():
+    monitor = APIDependencyMonitor(org_id=orgId, project_name=projectName)
+    monitor.results = [
+        "GET https://example.com HTTP/1.1 -> ✅ Request matches spec.",
+        "POST https://example.com HTTP/1.1 -> ❌ Request does not match spec.",
+    ]
+    with pytest.raises(SystemExit) as exc:
+        output_results_and_exit(monitor)
+    assert exc.value.code == 1
+
+
+def test_output_exits_1_when_all_failed():
+    monitor = APIDependencyMonitor(org_id=orgId, project_name=projectName)
+    monitor.results = [
+        "GET https://example.com HTTP/1.1 -> ❌ Request does not match spec.",
+        "POST https://example.com HTTP/1.1 -> ❌ Request does not match spec.",
+    ]
+    with pytest.raises(SystemExit) as exc:
+        output_results_and_exit(monitor)
+    assert exc.value.code == 1
+
+
+def test_output_exits_0_when_no_results():
+    monitor = APIDependencyMonitor(org_id=orgId, project_name=projectName)
+    with pytest.raises(SystemExit) as exc:
+        output_results_and_exit(monitor)
+    assert exc.value.code == 0

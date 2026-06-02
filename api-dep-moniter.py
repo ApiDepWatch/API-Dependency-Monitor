@@ -1,9 +1,10 @@
 import asyncio
-import argparse
+import os
 from mitmproxy import options
 from mitmproxy.tools.dump import DumpMaster
-from moniter import APIDependencyMonitor
+from moniter import APIDependencyMonitor, output_results_and_exit
 from dotenv import load_dotenv
+
 
 async def start_proxy_and_monitor_traffic(port: int, org_id: int, project_name: str):
     mitmproxy_config = options.Options(listen_port=port)
@@ -17,20 +18,16 @@ async def start_proxy_and_monitor_traffic(port: int, org_id: int, project_name: 
     except (KeyboardInterrupt, asyncio.CancelledError):
         mitmproxy_engine.shutdown()
 
-    print(f"\nCaptured {len(traffic_monitor.requests_log)} requests.")
-    print("Validation Results:")
-    for result in traffic_monitor.results:
-        print(result)
+    output_results_and_exit(traffic_monitor)
+
 
 def parse_args_and_run():
-    parser = argparse.ArgumentParser(description="API Dependency Monitor")
-    parser.add_argument("--port", type=int, required=True, help="Port to listen on")
-    parser.add_argument("--orgId", type=int, required=True, help="Organization ID")
-    parser.add_argument("--projectName", type=str, required=True, help="Project Name")
-    args = parser.parse_args()
+    port = int(os.getenv("PORT"))
+    org_id = int(os.getenv("ORG_ID"))
+    project_name = os.getenv("PROJECT_NAME")
 
     try:
-        asyncio.run(start_proxy_and_monitor_traffic(args.port, args.orgId, args.projectName))
+        asyncio.run(start_proxy_and_monitor_traffic(port, org_id, project_name))
     except KeyboardInterrupt:
         pass
 

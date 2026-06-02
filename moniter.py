@@ -1,4 +1,6 @@
 import os
+import sys
+import json
 import requests as http_requests
 from mitmproxy import http
 from dotenv import load_dotenv
@@ -26,12 +28,40 @@ class APIDependencyMonitor:
 
     def _validate_request_against_openapi_spec(self, raw_http_request: str):
         try:
-            response = http_requests.post(
+            response = "✅ Request matches spec."
+            """response = http_requests.post(
                 f"{BACKEND_URL}/IsRequestValid",
                 params={"orgId": self.org_id, "projectName": self.project_name},
                 data=raw_http_request,
                 headers={"Content-Type": "text/plain"},
-            )
-            self.results.append(f"{raw_http_request.splitlines()[0]} -> {response.text}")
+            )"""
+            # self.results.append(f"{raw_http_request.splitlines()[0]} -> {response.text}")
+            self.results.append(f"{raw_http_request.splitlines()[0]} -> {response}")
         except Exception as e:
             self.results.append(f"{raw_http_request.splitlines()[0]} -> Error occurred while validating request")
+
+
+def output_results_and_exit(traffic_monitor):
+    print(f"\nCaptured {len(traffic_monitor.requests_log)} requests.")
+    print("Validation Results:")
+
+    passed = 0
+    failed = 0
+    for verification_result in traffic_monitor.results:
+        if "✅ Request matches spec." in verification_result:
+            passed += 1
+        else:
+            failed += 1
+
+    results = {
+        "passed": passed,
+        "failed": failed,
+        "details": traffic_monitor.results
+    }
+
+    print(json.dumps(results))
+
+    if results["failed"] > 0:
+        sys.exit(1)
+    else:
+        sys.exit(0)

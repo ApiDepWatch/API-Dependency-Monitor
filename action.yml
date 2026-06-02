@@ -1,0 +1,34 @@
+name: 'API Dependency Monitor'
+description: 'Monitors API traffic and checks for compatibility with OpenAPI specifications.'
+inputs:
+  port:
+    description: 'Port to run the proxy server on'
+    required: true
+    default: '8080'
+  org_id:
+    description: 'Organization ID for API management backend'
+    required: true
+    default: '123'
+  project_name:
+    description: 'Project name for API management backend'
+    required: true
+    default: 'TestProject'
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.x'
+    - run: pip install -r ${{ github.action_path }}/requirments.txt
+      shell: bash
+    - run: python ${{ github.action_path }}/api-dep-moniter.py &
+      shell: bash
+      env:
+        PORT: ${{ inputs.port }}
+        ORG_ID: ${{ inputs.org_id }}
+        PROJECT_NAME: ${{ inputs.project_name }}
+    - run: sleep 5
+      shell: bash
+branding:
+  icon: "award"
+  color: "blue"

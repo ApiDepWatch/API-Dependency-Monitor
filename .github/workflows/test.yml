@@ -1,0 +1,31 @@
+name: Test Action
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Start the proxy via the action
+      - uses: ./
+        with:
+          port: '8080'
+          org_id: '1'
+          project_name: 'my-project'
+
+      # Send test requests through the proxy
+      - name: Send test HTTP requests through proxy
+        run: |
+          curl -x http://localhost:8080 http://httpbin.org/get
+          curl -x http://localhost:8080 "http://httpbin.org/get?userId=1"
+          curl -x http://localhost:8080 -X POST http://httpbin.org/post
+          curl -x http://localhost:8080 http://httpbin.org/anything/products
+
+      # Stop the proxy and print results
+      - name: Stop proxy
+        if: always()
+        run: pkill -SIGINT -f api-dep-moniter.py || true
