@@ -20,6 +20,11 @@ async def start_proxy_and_monitor_traffic(port: int, org_id: int, project_name: 
         traffic_monitor.output_results()
         mitmproxy_engine.shutdown()
 
+        for r in traffic_monitor.results:
+            if "✅" not in r:
+                sys.exit(1)
+        sys.exit(0)
+
     signal.signal(signal.SIGINT, handle_sigint)
 
     print(f"Monitor started on port {port}. Press Ctrl+C to stop.")
