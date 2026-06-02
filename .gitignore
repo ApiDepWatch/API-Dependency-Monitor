@@ -16,3 +16,6 @@ __pycache__/
 
 .claude/
 .idea/
+
+exit_code.txt
+moniter_pid.txt
