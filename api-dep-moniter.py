@@ -1,5 +1,7 @@
 import asyncio
 import os
+import sys
+import signal
 from mitmproxy import options
 from mitmproxy.tools.dump import DumpMaster
 from moniter import APIDependencyMonitor
@@ -11,18 +13,17 @@ async def start_proxy_and_monitor_traffic(port: int, org_id: int, project_name: 
     mitmproxy_engine = DumpMaster(mitmproxy_config)
     traffic_monitor = APIDependencyMonitor(org_id=org_id, project_name=project_name)
     mitmproxy_engine.addons.add(traffic_monitor)
-    
+
+    def handle_sigint(_sig, _frame):
+        print("SIGINT received, shutting down gracefully...")
+        sys.stdout.flush()
+        traffic_monitor.output_results()
+        mitmproxy_engine.shutdown()
+
+    signal.signal(signal.SIGINT, handle_sigint)
 
     print(f"Monitor started on port {port}. Press Ctrl+C to stop.")
-    try:
-        print(1)
-        await mitmproxy_engine.run()
-        print(2)
-    except (KeyboardInterrupt, asyncio.CancelledError):
-        print(3)
-        mitmproxy_engine.shutdown()
-        print(4)
-    
+    await mitmproxy_engine.run()
 
 
 def parse_args_and_run():
@@ -34,14 +35,8 @@ def parse_args_and_run():
     with open("moniter_pid.txt", "w") as f:
         f.write(str(pid))
 
-    try:
-        print(5)
-        asyncio.run(start_proxy_and_monitor_traffic(port, org_id, project_name))
-        print(6)
-    except KeyboardInterrupt:
-        print(7)
-        pass
-        print(8)
+    asyncio.run(start_proxy_and_monitor_traffic(port, org_id, project_name))
+
 
 if __name__ == "__main__":
     load_dotenv()
