@@ -21,7 +21,7 @@ runs:
         python-version: '3.x'
     - run: pip install -r ${{ github.action_path }}/requirments.txt
       shell: bash
-    - run: python ${{ github.action_path }}/api-dep-moniter.py &
+    - run: python ${{ github.action_path }}/api-dep-moniter.py > /tmp/proxy.log 2>&1 &
       shell: bash
       env:
         PORT: ${{ inputs.port }}

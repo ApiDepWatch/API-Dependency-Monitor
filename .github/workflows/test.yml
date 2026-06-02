@@ -28,4 +28,7 @@ jobs:
       # Stop the proxy and print results
       - name: Stop proxy
         if: always()
-        run: pkill -SIGINT -f api-dep-moniter.py || true
+        run: |
+          pkill -SIGINT -f api-dep-moniter.py || true
+          sleep 2
+          cat /tmp/proxy.log
