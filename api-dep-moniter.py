@@ -19,7 +19,7 @@ async def start_proxy_and_monitor_traffic(port: int, org_id: int, project_name: 
         sys.stdout.flush()
         traffic_monitor.output_results()
         for r in traffic_monitor.results:
-            if "✅" in r:
+            if "✅" not in r:
                 with open("exit_code.txt", "w") as f:
                     f.write("1")
                 sys.exit(1)
