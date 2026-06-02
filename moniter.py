@@ -41,6 +41,9 @@ class APIDependencyMonitor:
             self.results.append(f"{raw_http_request.splitlines()[0]} -> Error occurred while validating request")
 
 
+    def done(self):
+        output_results_and_exit(self)
+
 def output_results_and_exit(traffic_monitor):
     print(f"\nCaptured {len(traffic_monitor.requests_log)} requests.")
     print("Validation Results:")

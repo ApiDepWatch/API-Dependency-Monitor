@@ -2,7 +2,7 @@ import asyncio
 import os
 from mitmproxy import options
 from mitmproxy.tools.dump import DumpMaster
-from moniter import APIDependencyMonitor, output_results_and_exit
+from moniter import APIDependencyMonitor
 from dotenv import load_dotenv
 
 
@@ -17,8 +17,6 @@ async def start_proxy_and_monitor_traffic(port: int, org_id: int, project_name: 
         await mitmproxy_engine.run()
     except (KeyboardInterrupt, asyncio.CancelledError):
         mitmproxy_engine.shutdown()
-
-    output_results_and_exit(traffic_monitor)
 
 
 def parse_args_and_run():
