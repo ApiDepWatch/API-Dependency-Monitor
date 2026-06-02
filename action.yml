@@ -29,6 +29,14 @@ runs:
         PROJECT_NAME: ${{ inputs.project_name }}
     - run: sleep 5
       shell: bash
+    - run: |
+        sudo cp ~/.mitmproxy/mitmproxy-ca-cert.pem /usr/local/share/ca-certificates/mitmproxy.crt || true
+        sudo update-ca-certificates
+      shell: bash
+    - run: |
+        echo "HTTP_PROXY=http://localhost:${{ inputs.port }}" >> $GITHUB_ENV
+        echo "HTTPS_PROXY=http://localhost:${{ inputs.port }}" >> $GITHUB_ENV
+      shell: bash
 branding:
   icon: "award"
   color: "blue"
