@@ -11,6 +11,7 @@ async def start_proxy_and_monitor_traffic(port: int, org_id: int, project_name: 
     mitmproxy_engine = DumpMaster(mitmproxy_config)
     traffic_monitor = APIDependencyMonitor(org_id=org_id, project_name=project_name)
     mitmproxy_engine.addons.add(traffic_monitor)
+    
 
     print(f"Monitor started on port {port}. Press Ctrl+C to stop.")
     try:
@@ -27,6 +28,10 @@ def parse_args_and_run():
     port = int(os.getenv("PORT"))
     org_id = int(os.getenv("ORG_ID"))
     project_name = os.getenv("PROJECT_NAME")
+    pid = os.getpid()
+    print(f"proxy_pid={pid}")
+    with open("moniter_pid.txt", "w") as f:
+        f.write(str(pid))
 
     try:
         print(5)
