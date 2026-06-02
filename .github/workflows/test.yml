@@ -52,3 +52,23 @@ jobs:
         run: |
           kill -SIGINT $(cat moniter_pid.txt) || true
           timeout 10 bash -c "while kill -0 $(cat moniter_pid.txt) 2>/dev/null; do sleep 0.5; done" || true
+
+      - name: Check proxy process is dead
+        if: always()
+        run: |
+          PID=$(cat moniter_pid.txt)
+          echo ""
+          echo "=================================================="
+          echo "  PROXY PROCESS CHECK  (PID: $PID)"
+          echo "=================================================="
+          if kill -0 $PID 2>/dev/null; then
+            echo ""
+            echo "  ✅  YES — PROCESS IS RUNNING"
+            echo ""
+          else
+            echo ""
+            echo "  ❌  NO — PROCESS IS NOT RUNNING"
+            echo ""
+          fi
+          echo "=================================================="
+          echo ""
