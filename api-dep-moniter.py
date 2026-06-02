@@ -20,9 +20,9 @@ async def start_proxy_and_monitor_traffic(port: int, org_id: int, project_name: 
         print(2)
     except (KeyboardInterrupt, asyncio.CancelledError):
         print(3)
-        pass
+        mitmproxy_engine.shutdown()
         print(4)
-    mitmproxy_engine.shutdown()
+    
 
 
 def parse_args_and_run():

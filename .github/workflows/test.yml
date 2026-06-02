@@ -52,13 +52,12 @@ jobs:
         run: |
           PID=$(cat moniter_pid.txt)
           kill -SIGINT $PID || true
-          timeout 5 tail --pid=$PID -f /dev/null || true
+          timeout 60 tail --pid=$PID -f /dev/null || true
           if kill -0 $PID 2>/dev/null; then
-            kill -SIGTERM $PID || true
-            timeout 5 tail --pid=$PID -f /dev/null || true
-          fi
-          if kill -0 $PID 2>/dev/null; then
+            echo "SIGINT did not kill the process — sending SIGKILL"
             kill -SIGKILL $PID || true
+          else
+            echo "Process was killed by SIGINT"
           fi
 
       - name: Print proxy output
