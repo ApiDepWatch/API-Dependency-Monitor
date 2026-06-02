@@ -50,8 +50,9 @@ jobs:
       - name: Stop proxy
         if: always()
         run: |
-          kill -SIGINT $(cat moniter_pid.txt) || true
-          timeout 10 bash -c "while kill -0 $(cat moniter_pid.txt) 2>/dev/null; do sleep 0.5; done" || true
+          PID=$(cat moniter_pid.txt)
+          kill -SIGINT $PID || true
+          tail --pid=$PID -f /dev/null
 
       - name: Check proxy process is dead
         if: always()
