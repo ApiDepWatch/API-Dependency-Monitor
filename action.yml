@@ -5,6 +5,17 @@ inputs:
     description: 'Port to run the proxy server on'
     required: true
     default: '8080'
+  PATH_TO_API_SPEC:
+    description: 'Path to the OpenAPI specification file'
+    required: true
+    default: './.github/specFiles/sample_api_spec.yaml'
+  IS_PROVIDER:
+    description: 'Indicates if the repository is a provider'
+    required: true
+    default: 'false'
+  BACKEND_URL:
+    description: 'URL of the backend server to validate requests against'
+    required: true
 runs:
   using: "composite"
   steps:
@@ -24,6 +35,7 @@ runs:
         REPO_NAME: ${{ github.repository }}
         IS_PROVIDER: ${{ inputs.is_provider }}
         PATH_TO_API_SPEC: ${{ inputs.path_to_api_spec }}
+        BACKEND_URL: ${{ inputs.backend_url }}
     - run: sleep 5
       shell: bash
     - run: |
