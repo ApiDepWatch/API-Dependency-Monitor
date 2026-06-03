@@ -16,6 +16,8 @@ jobs:
           port: '8080'
           org_id: '1'
           project_name: 'my-project'
+          is_provider: 'true'
+          path_to_api_spec: './.github/specFiles/sample_api_spec.yaml'
 
       # Send test requests through the proxy
       - name: Send test HTTP requests through proxy
