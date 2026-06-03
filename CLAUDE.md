@@ -30,14 +30,18 @@ When added to a workflow, the action:
 ### `moniter.py`
 Contains the core logic:
 - `APIDependencyMonitor` — mitmproxy addon class. Registered via `mitmproxy_engine.addons.add(...)`. mitmproxy automatically calls its hooks:
-  - `request(flow)` — called on every intercepted HTTP request; formats it as raw HTTP and validates it
-  - `done()` — called by mitmproxy at shutdown; prints the JSON results summary
-- `output_results_and_exit(traffic_monitor)` — standalone function used in unit tests to assert exit codes
+  - `request(flow)` — called on every intercepted HTTP request; formats it as raw HTTP and calls `_validate_request_against_openapi_spec`
+- `_validate_request_against_openapi_spec(raw_http_request)` — POSTs the raw HTTP to `BACKEND_URL/IsRequestValid` and appends the result to `self.results`. Appends an error string on network failure.
+- `output_results()` — prints a JSON summary of captured and validated requests (called by the SIGINT handler in `api-dep-moniter.py`)
 
-**Note:** The real HTTP validation call (`http_requests.post(BACKEND_URL/IsRequestValid, ...)`) is currently stubbed out with a hardcoded `"✅ Request matches spec."` response for development/testing. The real call is commented out and can be restored.
+**Note:** The validation call is live and hits the real backend. One commented-out line (`response.text`) was replaced with `response` (the object) — this is a minor in-progress change and causes result strings to show the response object repr rather than the body text.
 
 ### `api-dep-moniter.py`
 Entrypoint script. Reads config from environment variables (`PORT`, `ORG_ID`, `PROJECT_NAME`), creates a mitmproxy `DumpMaster`, registers `APIDependencyMonitor` as an addon, and runs the event loop.
+
+Additional responsibilities:
+- Writes its PID to `moniter_pid.txt` so the workflow can send signals to it
+- Registers a `SIGINT` handler that calls `traffic_monitor.output_results()`, calculates an exit code (0 if all results contain `✅`, else 1), writes the exit code to `exit_code.txt`, and calls `sys.exit()`
 
 ### `action.yml`
 Composite action definition. Steps:
@@ -45,15 +49,20 @@ Composite action definition. Steps:
 2. `pip install -r requirments.txt` — installs dependencies
 3. `python api-dep-moniter.py > /tmp/proxy.log 2>&1 &` — starts proxy in background, output to `/tmp/proxy.log`
 4. `sleep 5` — waits for mitmproxy to finish binding to the port
+5. Installs the mitmproxy CA certificate into the system trust store (`/usr/local/share/ca-certificates/`) so HTTPS traffic can be intercepted without TLS errors
+6. Sets `HTTP_PROXY` and `HTTPS_PROXY` env vars to `http://localhost:<port>` so subsequent workflow steps automatically route traffic through the proxy
 
-Inputs: `port` (default `8080`), `org_id`, `project_name`
+Inputs: `port` (default `8080`), `org_id` (default `123`), `project_name` (default `TestProject`)
 
 ### `.github/workflows/test.yml`
 Tests the action end-to-end:
 1. Calls `uses: ./` to start the proxy
-2. Sends 4 curl requests through the proxy to `httpbin.org`
-3. Stops the proxy with `pkill -SIGINT` (SIGINT triggers the mitmproxy shutdown lifecycle which calls `done()`)
-4. Reads and prints `/tmp/proxy.log` to surface results in the Actions log
+2. Sends 5 curl requests to `httpbin.org` — 4 through the proxy (`-x http://localhost:8080`) and 1 directly (to verify non-proxied traffic is unaffected)
+3. Checks that the proxy process (identified by PID from `moniter_pid.txt`) is still alive
+4. Stops the proxy by sending `kill -SIGINT $PID`; waits up to 60s for it to exit, then falls back to SIGKILL
+5. Prints `/tmp/proxy.log` to surface proxy output in the Actions log
+6. Reads `exit_code.txt` (written by the SIGINT handler) and exits with that code to fail the job on validation errors
+7. Checks that the proxy process is now dead
 
 Triggers: `push`, `pull_request`, `workflow_dispatch`
 

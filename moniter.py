@@ -1,5 +1,4 @@
 import os
-import sys
 import json
 import requests as http_requests
 from mitmproxy import http
@@ -9,10 +8,13 @@ load_dotenv()
 BACKEND_URL = os.getenv("BACKEND_URL")
 
 class APIDependencyMonitor:
-    def __init__(self, org_id: int, project_name: str):
+    def __init__(self, org_id: int, project_name: str, org_name: str, user_id: int, username: str):
         self.requests_log = []
         self.org_id = org_id
         self.project_name = project_name
+        self.org_name = org_name
+        self.user_id = user_id
+        self.username = username
         self.results = []
 
     def request(self, flow: http.HTTPFlow):
@@ -28,15 +30,19 @@ class APIDependencyMonitor:
 
     def _validate_request_against_openapi_spec(self, raw_http_request: str):
         try:
-            response = "✅ Request matches spec."
-            """response = http_requests.post(
+            response = http_requests.post(
                 f"{BACKEND_URL}/IsRequestValid",
-                params={"orgId": self.org_id, "projectName": self.project_name},
+                params={
+                    "orgId": self.org_id, 
+                    "projectName": self.project_name, 
+                    "orgName": self.org_name, 
+                    "userId": self.user_id, 
+                    "username": self.username
+                    },
                 data=raw_http_request,
                 headers={"Content-Type": "text/plain"},
-            )"""
-            # self.results.append(f"{raw_http_request.splitlines()[0]} -> {response.text}")
-            self.results.append(f"{raw_http_request.splitlines()[0]} -> {response}")
+            )
+            self.results.append(f"{raw_http_request.splitlines()[0]} -> {response.text}")
         except Exception as e:
             self.results.append(f"{raw_http_request.splitlines()[0]} -> Error occurred while validating request")
 
