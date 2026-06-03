@@ -5,17 +5,6 @@ inputs:
     description: 'Port to run the proxy server on'
     required: true
     default: '8080'
-  PATH_TO_API_SPEC:
-    description: 'Path to the OpenAPI specification file'
-    required: true
-    default: './.github/specFiles/sample_api_spec.yaml'
-  IS_PROVIDER:
-    description: 'Indicates if the repository is a provider'
-    required: true
-    default: 'false'
-  BACKEND_URL:
-    description: 'URL of the backend server to validate requests against'
-    required: true
 runs:
   using: "composite"
   steps:
@@ -27,15 +16,15 @@ runs:
     - run: python ${{ github.action_path }}/api-dep-moniter.py > /tmp/proxy.log 2>&1 &
       shell: bash
       env:
-        PORT: ${{ inputs.port }}
+        PORT: ${{ vars.port }}
         ORG_ID: ${{ github.repository_owner_id }}
         ORG_NAME: ${{ github.repository_owner }}
         USER_ID: ${{ github.actor_id }}
         USERNAME: ${{ github.actor }}
         REPO_NAME: ${{ github.repository }}
-        IS_PROVIDER: ${{ inputs.is_provider }}
-        PATH_TO_API_SPEC: ${{ inputs.path_to_api_spec }}
-        BACKEND_URL: ${{ inputs.backend_url }}
+        IS_PROVIDER: ${{ vars.IS_PROVIDER }}
+        PATH_TO_API_SPEC: ${{ vars.PATH_TO_API_SPEC }}
+        BACKEND_URL: ${{ vars.BACKEND_URL }}
     - run: sleep 5
       shell: bash
     - run: |
