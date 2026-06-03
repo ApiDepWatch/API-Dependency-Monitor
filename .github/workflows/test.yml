@@ -18,6 +18,7 @@ jobs:
           project_name: 'my-project'
           is_provider: 'true'
           path_to_api_spec: './.github/specFiles/sample_api_spec.yaml'
+          backend_url: 'https://scrawny-ashes-reversion.ngrok-free.dev/API-Management-Server'
 
       # Send test requests through the proxy
       - name: Send test HTTP requests through proxy
