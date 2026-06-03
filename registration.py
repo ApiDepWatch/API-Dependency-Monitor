@@ -12,10 +12,21 @@ class Registration:
         self.user_id = user_id
         self.username = username
 
+        print("backend_url=", self.backend_url)
+        print("is_provider=", self.is_provider)
+        print("org_id=", self.org_id)
+        print("project_name=", self.project_name)
+        print("org_name=", self.org_name)
+        print("user_id=", self.user_id)
+        print("username=", self.username)
+
+
     def registar_repository(self):
         if self.is_provider:
+            print("Registering provider repository with backend...")
             self.registar_provider_repository_with_backend()
         else:
+            print("Registering consumer repository with backend...")
             self.registar_consumer_repository_with_backend()
 
     def registar_provider_repository_with_backend(self):
@@ -23,6 +34,10 @@ class Registration:
             specfile = ""
             with open(os.getenv("PATH_TO_API_SPEC")) as f:
                 specfile = f.read()
+            print("====================\n")
+            print("API Spec file content:")
+            print(specfile)
+            print("====================\n")
 
             response = http_requests.post(
                 f"{self.backend_url}/RegisterProvider",
@@ -31,10 +46,10 @@ class Registration:
                     "projectName": self.project_name, 
                     "orgName": self.org_name, 
                     "userId": self.user_id, 
-                    "username": self.username,
-                    "openApiSpec": specfile
+                    "userName": self.username
                     },
                 headers={"Content-Type": "application/json"},
+                data=specfile
             )
             if response.status_code == 200:
                 print(response.text)
@@ -52,7 +67,7 @@ class Registration:
                     "projectName": self.project_name, 
                     "orgName": self.org_name, 
                     "userId": self.user_id, 
-                    "username": self.username
+                    "userName": self.username
                     },
                 headers={"Content-Type": "application/json"},
             )

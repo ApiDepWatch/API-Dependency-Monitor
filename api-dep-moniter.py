@@ -52,15 +52,12 @@ async def start_proxy_and_monitor_traffic(
 
 
 def parse_args_and_run():
-    
-
     port = int(os.getenv("PORT"))
     org_id = int(os.getenv("ORG_ID"))
     org_name = os.getenv("ORG_NAME")
     user_id = int(os.getenv("USER_ID"))
     username = os.getenv("USERNAME")
     project_name = os.getenv("REPO_NAME")
-    is_provider = os.getenv("IS_PROVIDER").lower() == "true"
     
     
     registration = Registration(
