@@ -5,6 +5,18 @@ inputs:
     description: 'Port to run the proxy server on'
     required: true
     default: '8080'
+  is_provider:
+    description: 'Whether this repo is an API provider (pass vars.IS_PROVIDER from your workflow)'
+    required: false
+    default: 'false'
+  path_to_api_spec:
+    description: 'Path to the OpenAPI spec file (pass vars.PATH_TO_API_SPEC from your workflow)'
+    required: false
+    default: ''
+  backend_url:
+    description: 'Base URL of the API management backend (pass vars.BACKEND_URL from your workflow)'
+    required: false
+    default: ''
 runs:
   using: "composite"
   steps:
@@ -22,9 +34,9 @@ runs:
         USER_ID: ${{ github.actor_id }}
         USERNAME: ${{ github.actor }}
         REPO_NAME: ${{ github.repository }}
-        IS_PROVIDER: ${{ vars.IS_PROVIDER }}
-        PATH_TO_API_SPEC: ${{ vars.PATH_TO_API_SPEC }}
-        BACKEND_URL: ${{ vars.BACKEND_URL }}
+        IS_PROVIDER: ${{ inputs.is_provider }}
+        PATH_TO_API_SPEC: ${{ inputs.path_to_api_spec }}
+        BACKEND_URL: ${{ inputs.backend_url }}
     - run: sleep 5
       shell: bash
     - run: |
