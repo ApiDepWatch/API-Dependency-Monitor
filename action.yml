@@ -16,7 +16,7 @@ runs:
     - run: python ${{ github.action_path }}/api-dep-moniter.py > /tmp/proxy.log 2>&1 &
       shell: bash
       env:
-        PORT: ${{ vars.port }}
+        PORT: ${{ inputs.port }}
         ORG_ID: ${{ github.repository_owner_id }}
         ORG_NAME: ${{ github.repository_owner }}
         USER_ID: ${{ github.actor_id }}
