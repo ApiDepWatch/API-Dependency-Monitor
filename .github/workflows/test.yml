@@ -14,11 +14,9 @@ jobs:
       - uses: ./
         with:
           port: '8080'
-          org_id: '1'
-          project_name: 'my-project'
-          is_provider: 'true'
-          path_to_api_spec: './.github/specFiles/sample_api_spec.yaml'
-          backend_url: 'https://scrawny-ashes-reversion.ngrok-free.dev/API-Management-Server'
+          is_provider: ${{ vars.IS_PROVIDER }}
+          path_to_api_spec: ${{ vars.PATH_TO_API_SPEC }}
+          backend_url: ${{ vars.BACKEND_URL }}
 
       # Send test requests through the proxy
       - name: Send test HTTP requests through proxy
