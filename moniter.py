@@ -33,11 +33,7 @@ class APIDependencyMonitor:
             response = http_requests.post(
                 f"{BACKEND_URL}/IsRequestValid",
                 params={
-                    "orgId": self.org_id, 
-                    "projectName": self.project_name, 
-                    "orgName": self.org_name, 
-                    "userId": self.user_id, 
-                    "username": self.username
+                    "projectName": self.project_name
                     },
                 data=raw_http_request,
                 headers={"Content-Type": "text/plain"},

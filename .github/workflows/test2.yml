@@ -1,0 +1,162 @@
+name: E2E Test
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # ── Setup ─────────────────────────────────────────────────────────────
+      # Install Python + requests before starting the proxy so we can
+      # register the provider against the backend first.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install requests
+        run: pip install requests
+
+      # ── Register provider ─────────────────────────────────────────────────
+      # Registers this repo as an API provider in the backend using the
+      # httpbin spec. hostName=httpbin.org must match the Host header of
+      # requests that will be routed through the proxy in the steps below.
+      - name: Register httpbin.org provider with backend
+        env:
+          BACKEND_URL: ${{ vars.BACKEND_URL }}
+        run: |
+          python3 << 'PYEOF'
+          import requests, os, sys
+
+          spec = open('.github/workflows/httpbin_spec.yaml').read()
+
+          r = requests.post(
+              f"{os.getenv('BACKEND_URL')}/RegisterProvider",
+              params={
+                  'orgId':       '${{ github.repository_owner_id }}',
+                  'orgName':     '${{ github.repository_owner }}',
+                  'projectName': '${{ github.repository }}',
+                  'userId':      '${{ github.actor_id }}',
+                  'userName':    '${{ github.actor }}',
+                  'hostName':    'httpbin.org',
+              },
+              headers={'Content-Type': 'text/plain'},
+              data=spec,
+          )
+          print(f"Registration status : {r.status_code}")
+          print(f"Registration body   : {r.text}")
+          if r.status_code != 200:
+              sys.exit(1)
+          PYEOF
+
+      # ── Start proxy ───────────────────────────────────────────────────────
+      # Starts the proxy in consumer mode (IS_PROVIDER=false).
+      # On startup it registers this repo as a consumer with the backend,
+      # then begins intercepting all HTTP/HTTPS traffic and validating each
+      # request against the spec registered above.
+      - name: Start proxy (consumer mode)
+        uses: ./
+        with:
+          port: '8080'
+          is_provider: 'false'
+          backend_url: ${{ vars.BACKEND_URL }}
+
+      # ── Send valid requests ───────────────────────────────────────────────
+      # These paths are all defined in httpbin_spec.yaml — the monitor
+      # should validate them as ✅.
+      - name: Send valid requests through proxy
+        run: |
+          echo "=== GET /get ==="
+          curl -f -x http://localhost:8080 http://httpbin.org/get
+
+          echo "=== POST /post ==="
+          curl -f -x http://localhost:8080 -X POST http://httpbin.org/post
+
+          echo "=== GET /anything/products ==="
+          curl -f -x http://localhost:8080 http://httpbin.org/anything/products
+
+      # ── Send invalid request ──────────────────────────────────────────────
+      # /nonexistent is NOT in httpbin_spec.yaml — the monitor should flag
+      # it as ❌ and cause the proxy to write exit code 1.
+      - name: Send invalid request (not in spec)
+        run: |
+          echo "=== GET /nonexistent (not in spec — expect ❌) ==="
+          curl -x http://localhost:8080 http://httpbin.org/nonexistent || true
+
+      # ── Health check ──────────────────────────────────────────────────────
+      - name: Check proxy is still alive
+        if: always()
+        run: |
+          PID=$(cat moniter_pid.txt)
+          echo "=================================================="
+          echo "  PROXY PROCESS CHECK  (PID: $PID)"
+          echo "=================================================="
+          if kill -0 $PID 2>/dev/null; then
+            echo "  ✅  PROCESS IS RUNNING"
+          else
+            echo "  ❌  PROCESS IS NOT RUNNING"
+          fi
+          echo "=================================================="
+
+      # ── Shutdown ──────────────────────────────────────────────────────────
+      # SIGINT triggers the handle_sigint handler in api-dep-moniter.py which
+      # calls output_results(), writes exit_code.txt, then exits.
+      - name: Stop proxy
+        if: always()
+        run: |
+          PID=$(cat moniter_pid.txt)
+          kill -SIGINT $PID || true
+          timeout 60 tail --pid=$PID -f /dev/null || true
+          if kill -0 $PID 2>/dev/null; then
+            echo "SIGINT did not stop proxy — sending SIGKILL"
+            kill -SIGKILL $PID || true
+          else
+            echo "Proxy stopped cleanly via SIGINT"
+          fi
+
+      # ── Print proxy log ───────────────────────────────────────────────────
+      - name: Print proxy output
+        if: always()
+        run: |
+          echo "=================================================="
+          echo "  PROXY OUTPUT (/tmp/proxy.log)"
+          echo "=================================================="
+          cat /tmp/proxy.log
+          echo "=================================================="
+
+      # ── Assert results ────────────────────────────────────────────────────
+      # exit_code.txt is written by the SIGINT handler:
+      #   0 = all intercepted requests matched the spec
+      #   1 = at least one request did not match
+      # We sent one invalid request (/nonexistent) so we expect exit code 1.
+      - name: Assert exit code is 1 (invalid request was detected)
+        if: always()
+        run: |
+          EXIT=$(cat exit_code.txt)
+          echo "Proxy exit code: $EXIT"
+          if [ "$EXIT" = "1" ]; then
+            echo "✅ Exit code 1 — invalid request was correctly detected"
+          else
+            echo "❌ Expected exit code 1 but got $EXIT"
+            exit 1
+          fi
+
+      # ── Confirm proxy is dead ─────────────────────────────────────────────
+      - name: Check proxy is dead
+        if: always()
+        run: |
+          PID=$(cat moniter_pid.txt)
+          echo "=================================================="
+          echo "  PROXY PROCESS CHECK  (PID: $PID)"
+          echo "=================================================="
+          if kill -0 $PID 2>/dev/null; then
+            echo "  ❌  PROCESS IS STILL RUNNING"
+          else
+            echo "  ✅  PROCESS IS DEAD"
+          fi
+          echo "=================================================="

@@ -39,36 +39,52 @@ class Registration:
             print(specfile)
             print("====================\n")
 
+            params = {
+                "orgId": self.org_id,
+                "projectName": self.project_name,
+                "orgName": self.org_name,
+                "userId": self.user_id,
+                "userName": self.username,
+                "hostName": os.getenv("HOST_NAME")
+            }
+
+
+            print("====================================\n")
+            print("RegisterProvider request:")
+            print(f"  url={self.backend_url}/RegisterProvider")
+            print(f"  params={params}")
+            print("  data=SPECFILEEEEE")
+            print("====================================\n")
+            
             response = http_requests.post(
                 f"{self.backend_url}/RegisterProvider",
-                params={
-                    "orgId": self.org_id, 
-                    "projectName": self.project_name, 
-                    "orgName": self.org_name, 
-                    "userId": self.user_id, 
-                    "userName": self.username
-                    },
+                params=params,
                 headers={"Content-Type": "application/json"},
                 data=specfile
             )
-            if response.status_code == 200:
-                print(response.text)
-            else:
-                print(f"Failed to register provider repository with backend. Status code: {response.status_code}")
+            print(f"RegisterProvider response: status={response.status_code} body={response.text}")
         except Exception as e:
             print(f"Error occurred while registering provider repository with backend: {e}")
 
     def registar_consumer_repository_with_backend(self):
         try:
+            params={
+                "orgId": self.org_id, 
+                "projectName": self.project_name, 
+                "orgName": self.org_name, 
+                "userId": self.user_id, 
+                "userName": self.username
+            }
+
+            print("====================================\n")
+            print("RegisterConsumer request:")
+            print(f"  url={self.backend_url}/RegisterConsumer")
+            print(f"  params={params}")
+            print("====================================\n")
+
             response = http_requests.post(
                 f"{self.backend_url}/RegisterConsumer",
-                params={
-                    "orgId": self.org_id, 
-                    "projectName": self.project_name, 
-                    "orgName": self.org_name, 
-                    "userId": self.user_id, 
-                    "userName": self.username
-                    },
+                params=params,
                 headers={"Content-Type": "application/json"},
             )
             if response.status_code == 200:

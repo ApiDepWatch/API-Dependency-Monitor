@@ -1,0 +1,29 @@
+openapi: 3.0.0
+info:
+  title: HTTPBin API
+  version: 1.0.0
+paths:
+  /get:
+    get:
+      summary: Returns GET data
+      responses:
+        '200':
+          description: OK
+  /post:
+    post:
+      summary: Returns POST data
+      responses:
+        '200':
+          description: OK
+  /anything/{path}:
+    get:
+      summary: Returns anything at any path
+      parameters:
+        - name: path
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
