@@ -37,6 +37,7 @@ runs:
         IS_PROVIDER: ${{ inputs.is_provider }}
         PATH_TO_API_SPEC: ${{ inputs.path_to_api_spec }}
         BACKEND_URL: ${{ inputs.backend_url }}
+        HOST_NAME: ${{ inputs.host_name }}
     - run: sleep 5
       shell: bash
     - run: |
