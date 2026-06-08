@@ -17,6 +17,10 @@ inputs:
     description: 'Base URL of the API management backend (pass vars.BACKEND_URL from your workflow)'
     required: false
     default: ''
+  host_name:
+    description: 'Host name to monitor (e.g., httpbin.org) — only required
+      if is_provider=true'
+    required: false
 runs:
   using: "composite"
   steps:
