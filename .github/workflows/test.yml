@@ -23,6 +23,7 @@ jobs:
           curl -x http://localhost:8080 "http://httpbin.org/get?userId=1"
           curl -x http://localhost:8080 -X POST http://httpbin.org/post
           curl -x http://localhost:8080 http://httpbin.org/anything/products
+          curl -x http://localhost:8080 http://httpbin.orgs/anything/products
           curl http://httpbin.org/get
 
       - name: Check proxy process is alive
