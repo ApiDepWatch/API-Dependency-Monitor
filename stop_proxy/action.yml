@@ -1,0 +1,26 @@
+name: 'API Dependency Monitor Stop Proxy'
+description: 'Stops proxy and outputs API Dependency Monitor results'
+runs:
+  using: "composite"
+  steps:
+    - name: Stop proxy and print results
+      if: always()
+      shell: bash
+      run: |
+        PID=$(cat moniter_pid.txt)
+        kill -SIGINT $PID || true
+        timeout 60 tail --pid=$PID -f /dev/null || true
+        if kill -0 $PID 2>/dev/null; then
+          echo "SIGINT did not kill the process — sending SIGKILL"
+          kill -SIGKILL $PID || true
+        else
+          echo "Process was killed by SIGINT"
+        fi
+        echo ""
+        echo "=================================================="
+        echo "  PROXY OUTPUT"
+        echo "=================================================="
+        cat /tmp/proxy.log
+        echo "=================================================="
+        echo ""
+        exit $(cat exit_code.txt)
