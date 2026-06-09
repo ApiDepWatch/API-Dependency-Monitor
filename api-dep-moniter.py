@@ -4,7 +4,7 @@ import sys
 import signal
 from mitmproxy import options
 from mitmproxy.tools.dump import DumpMaster
-from moniter import BACKEND_URL, APIDependencyMonitor
+from moniter import APIDependencyMonitor
 from dotenv import load_dotenv
 
 from registration import Registration
@@ -12,7 +12,6 @@ from registration import Registration
 
 
 async def start_proxy_and_monitor_traffic(
-        port: int, 
         org_id: int, 
         project_name: str, 
         org_name: str, 
@@ -20,7 +19,7 @@ async def start_proxy_and_monitor_traffic(
         username: str
     ):
     
-    mitmproxy_config = options.Options(listen_port=port)
+    mitmproxy_config = options.Options(listen_port=8080)
     mitmproxy_engine = DumpMaster(mitmproxy_config)
     traffic_monitor = APIDependencyMonitor(
         org_id=org_id, 
@@ -47,12 +46,11 @@ async def start_proxy_and_monitor_traffic(
 
     signal.signal(signal.SIGINT, handle_sigint)
 
-    print(f"Monitor started on port {port}")
+    print(f"Monitor started on port 8080")
     await mitmproxy_engine.run()
 
 
 def parse_args_and_run():
-    port = int(os.getenv("PORT"))
     org_id = int(os.getenv("ORG_ID"))
     org_name = os.getenv("ORG_NAME")
     user_id = int(os.getenv("USER_ID"))
@@ -78,7 +76,6 @@ def parse_args_and_run():
 
     asyncio.run(
         start_proxy_and_monitor_traffic(
-            port, 
             org_id, 
             project_name, 
             org_name, 

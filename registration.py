@@ -5,15 +5,14 @@ import requests as http_requests
 class Registration:
     def __init__(self, org_id: int, project_name: str, org_name: str, user_id: int, username: str):
         self.backend_url = os.getenv("BACKEND_URL")
-        self.is_provider = os.getenv("IS_PROVIDER").lower() == "true"
         self.org_id = org_id
         self.project_name = project_name
         self.org_name = org_name
         self.user_id = user_id
         self.username = username
+        self.spec_path = os.getenv("PATH_TO_API_SPEC")
 
         print("backend_url=", self.backend_url)
-        print("is_provider=", self.is_provider)
         print("org_id=", self.org_id)
         print("project_name=", self.project_name)
         print("org_name=", self.org_name)
@@ -22,23 +21,18 @@ class Registration:
 
 
     def registar_repository(self):
-        if self.is_provider:
-            print("Registering provider repository with backend...")
-            self.registar_provider_repository_with_backend()
-        else:
+        if self.spec_path == "":
             print("Registering consumer repository with backend...")
             self.registar_consumer_repository_with_backend()
+        else:
+            print("Registering provider repository with backend...")
+            self.registar_provider_repository_with_backend()
 
     def registar_provider_repository_with_backend(self):
         try:
             specfile = ""
-            with open(os.getenv("PATH_TO_API_SPEC")) as f:
+            with open(self.spec_path) as f:
                 specfile = f.read()
-            print("====================\n")
-            print("API Spec file content:")
-            print(specfile)
-            print("====================\n")
-
             params = {
                 "orgId": self.org_id,
                 "projectName": self.project_name,
@@ -53,7 +47,7 @@ class Registration:
             print("RegisterProvider request:")
             print(f"  url={self.backend_url}/RegisterProvider")
             print(f"  params={params}")
-            print("  data=SPECFILEEEEE")
+            print(f"  data={specfile[:100]}... (truncated)")
             print("====================================\n")
             
             response = http_requests.post(
