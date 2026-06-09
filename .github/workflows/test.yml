@@ -13,8 +13,6 @@ jobs:
       # Start the proxy via the action
       - uses: ./
         with:
-          port: '8080'
-          is_provider: ${{ vars.IS_PROVIDER }}
           path_to_api_spec: ${{ vars.PATH_TO_API_SPEC }}
           backend_url: ${{ vars.BACKEND_URL }}
 

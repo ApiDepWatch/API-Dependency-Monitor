@@ -11,7 +11,6 @@ load_dotenv()
 
 def test_registration_reads_env_variables():
     os.environ["BACKEND_URL"] = "http://test-backend.com"
-    os.environ["IS_PROVIDER"] = "true"
     os.environ["ORG_ID"] = "123"
     os.environ["REPO_NAME"] = "test-project"
     os.environ["ORG_NAME"] = "test-org"
@@ -27,7 +26,6 @@ def test_registration_reads_env_variables():
     )
 
     assert registration.backend_url == "http://test-backend.com"
-    assert registration.is_provider is True
     assert registration.org_id == 123
     assert registration.project_name == "test-project"
     assert registration.org_name == "test-org"
