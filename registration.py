@@ -12,13 +12,6 @@ class Registration:
         self.username = username
         self.spec_path = os.getenv("PATH_TO_API_SPEC")
 
-        print("backend_url=", self.backend_url)
-        print("org_id=", self.org_id)
-        print("project_name=", self.project_name)
-        print("org_name=", self.org_name)
-        print("user_id=", self.user_id)
-        print("username=", self.username)
-
 
     def registar_repository(self):
         if self.spec_path == "":
@@ -41,14 +34,6 @@ class Registration:
                 "userName": self.username,
                 "hostName": os.getenv("HOST_NAME")
             }
-
-
-            print("====================================\n")
-            print("RegisterProvider request:")
-            print(f"  url={self.backend_url}/RegisterProvider")
-            print(f"  params={params}")
-            print(f"  data={specfile[:100]}... (truncated)")
-            print("====================================\n")
             
             response = http_requests.post(
                 f"{self.backend_url}/RegisterProvider",
@@ -56,9 +41,9 @@ class Registration:
                 headers={"Content-Type": "application/json"},
                 data=specfile
             )
-            print(f"RegisterProvider response: status={response.status_code} body={response.text}")
+            print(f"::warning::RegisterProvider response: status={response.status_code} body={response.text}")
         except Exception as e:
-            print(f"Error occurred while registering provider repository with backend: {e}")
+            print(f"::warning::Error occurred while registering provider repository with backend: {e}")
 
     def registar_consumer_repository_with_backend(self):
         try:
@@ -70,12 +55,6 @@ class Registration:
                 "userName": self.username
             }
 
-            print("====================================\n")
-            print("RegisterConsumer request:")
-            print(f"  url={self.backend_url}/RegisterConsumer")
-            print(f"  params={params}")
-            print("====================================\n")
-
             response = http_requests.post(
                 f"{self.backend_url}/RegisterConsumer",
                 params=params,
@@ -84,7 +63,7 @@ class Registration:
             if response.status_code == 200:
                 print(response.text)
             else:
-                print(f"Failed to register consumer repository with backend. Status code: {response.status_code}")
+                print(f"::warning::Failed to register consumer repository with backend. Status code: {response.status_code}")
         except Exception as e:
-            print(f"Error occurred while registering consumer repository with backend: {e}")
+            print(f"::warning::Error occurred while registering consumer repository with backend: {e}")
     

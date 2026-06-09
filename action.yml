@@ -1,4 +1,4 @@
-name: 'API Dependency Monitor'
+name: 'API Dependency Monitor Start Proxy'
 description: 'Monitors API traffic and checks for compatibility with OpenAPI specifications.'
 inputs:
   path_to_api_spec:

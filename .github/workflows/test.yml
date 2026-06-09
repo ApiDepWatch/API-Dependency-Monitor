@@ -46,34 +46,8 @@ jobs:
           echo "=================================================="
           echo ""
 
-      # Stop the proxy and print results
-      - name: Stop proxy
+      - uses: ./stop_proxy
         if: always()
-        run: |
-          PID=$(cat moniter_pid.txt)
-          kill -SIGINT $PID || true
-          timeout 60 tail --pid=$PID -f /dev/null || true
-          if kill -0 $PID 2>/dev/null; then
-            echo "SIGINT did not kill the process — sending SIGKILL"
-            kill -SIGKILL $PID || true
-          else
-            echo "Process was killed by SIGINT"
-          fi
-
-      - name: Print proxy output
-        if: always()
-        run: |
-          echo ""
-          echo "=================================================="
-          echo "  PROXY OUTPUT"
-          echo "=================================================="
-          cat /tmp/proxy.log
-          echo "=================================================="
-          echo ""
-
-      - name: Test output
-        if: always()
-        run: exit $(cat exit_code.txt)
 
       - name: Check proxy process is dead
         if: always()
