@@ -44,10 +44,13 @@ class APIDependencyMonitor:
 
 
     def output_results(self):
-        print(f"\nCaptured {len(self.requests_log)} requests.")
+        print(f"::group::\nCaptured {len(self.requests_log)} requests.")
         print("Validation Results:")
+        print("::endgroup::")
         passed = sum(1 for r in self.results if "✅ Request matches spec." in r)
         failed = len(self.results) - passed
+        if failed > 0:
+            print(f"::warning::{failed} request(s) failed validation.")
         print(json.dumps({
             "captured": len(self.requests_log),
             "passed": passed,
