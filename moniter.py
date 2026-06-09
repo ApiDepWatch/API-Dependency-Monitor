@@ -60,9 +60,9 @@ class APIDependencyMonitor:
 
 
         for r in self.results:
-            if r == "✅ Request matches spec":
+            if "✅" in r:
                 print(f"::success::✅ {r}")
-            elif r == "❌ Request does NOT match spec":
+            elif "❌" in r:
                 print(f"::error::❌ {r}")
             else:
                 print(f"::warning::⚠️ {r}")
