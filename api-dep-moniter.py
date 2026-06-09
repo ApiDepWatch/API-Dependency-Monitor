@@ -31,7 +31,6 @@ async def start_proxy_and_monitor_traffic(
     mitmproxy_engine.addons.add(traffic_monitor)
 
     def handle_sigint(_sig, _frame):
-        print("SIGINT received, shutting down gracefully...")
         sys.stdout.flush()
         traffic_monitor.output_results()
 
@@ -46,7 +45,6 @@ async def start_proxy_and_monitor_traffic(
 
     signal.signal(signal.SIGINT, handle_sigint)
 
-    print(f"Monitor started on port 8080")
     await mitmproxy_engine.run()
 
 
@@ -70,7 +68,6 @@ def parse_args_and_run():
     
 
     pid = os.getpid()
-    print(f"proxy_pid={pid}")
     with open("moniter_pid.txt", "w") as f:
         f.write(str(pid))
 
