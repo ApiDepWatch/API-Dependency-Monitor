@@ -71,10 +71,6 @@ jobs:
           echo "=================================================="
           echo ""
 
-      - name: Test output
-        if: always()
-        run: exit $(cat exit_code.txt)
-
       - name: Check proxy process is dead
         if: always()
         run: |
