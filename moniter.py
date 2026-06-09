@@ -52,9 +52,17 @@ class APIDependencyMonitor:
             "captured": len(self.requests_log),
             "passed": passed,
             "failed": failed,
-            "details": self.results
         })
         if failed > 0:
             print(f"::warning::{summary}", flush=True)
         else:
             print(summary, flush=True)
+
+
+        for r in self.results:
+            if r == "✅ Request matches spec":
+                print(f"::success::✅ {r}")
+            elif r == "❌ Request does NOT match spec":
+                print(f"::error::❌ {r}")
+            else:
+                print(f"::warning::⚠️ {r}")
