@@ -26,45 +26,5 @@ jobs:
           curl -x http://localhost:8080 http://httpbin.orgs/anything/products
           curl http://httpbin.org/get
 
-      - name: Check proxy process is alive
-        if: always()
-        run: |
-          PID=$(cat moniter_pid.txt)
-          echo ""
-          echo "=================================================="
-          echo "  PROXY PROCESS CHECK  (PID: $PID)"
-          echo "=================================================="
-          if kill -0 $PID 2>/dev/null; then
-            echo ""
-            echo "  ✅  YES — PROCESS IS RUNNING"
-            echo ""
-          else
-            echo ""
-            echo "  ❌  NO — PROCESS IS NOT RUNNING"
-            echo ""
-          fi
-          echo "=================================================="
-          echo ""
-
       - uses: ./stop_proxy
         if: always()
-
-      - name: Check proxy process is dead
-        if: always()
-        run: |
-          PID=$(cat moniter_pid.txt)
-          echo ""
-          echo "=================================================="
-          echo "  PROXY PROCESS CHECK  (PID: $PID)"
-          echo "=================================================="
-          if kill -0 $PID 2>/dev/null; then
-            echo ""
-            echo "  ✅  YES — PROCESS IS RUNNING"
-            echo ""
-          else
-            echo ""
-            echo "  ❌  NO — PROCESS IS NOT RUNNING"
-            echo ""
-          fi
-          echo "=================================================="
-          echo ""
