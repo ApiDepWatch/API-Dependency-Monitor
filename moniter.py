@@ -39,14 +39,14 @@ class APIDependencyMonitor:
                 headers={"Content-Type": "text/plain"},
             )
             self.results.append(f"{raw_http_request.splitlines()[0]} -> {response.text}")
-        except Exception as e:
+        except Exception:
             self.results.append(f"{raw_http_request.splitlines()[0]} -> Error occurred while validating request")
 
 
     def output_results(self):
         print(f"\nCaptured {len(self.requests_log)} requests.")
         print("Validation Results:")
-        passed = sum(1 for r in self.results if "✅ Request matches spec." in r)
+        passed = sum(1 for r in self.results if "✅" in r)
         failed = len(self.results) - passed
         summary = json.dumps({
             "captured": len(self.requests_log),
