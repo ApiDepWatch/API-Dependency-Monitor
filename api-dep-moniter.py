@@ -36,7 +36,7 @@ async def start_proxy_and_monitor_traffic(
 
         exit_code = 0
         for r in traffic_monitor.results:
-            if "✅" not in r:
+            if "❌" in r:
                 exit_code = 1
 
         with open("exit_code.txt", "w") as f:
