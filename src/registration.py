@@ -34,6 +34,7 @@ class Registration:
                 "userName": self.username,
                 "hostName": os.getenv("HOST_NAME")
             }
+            print(f"::warning::hostname={os.getenv("HOST_NAME")}")
             
             response = http_requests.post(
                 f"{self.backend_url}/RegisterProvider",
