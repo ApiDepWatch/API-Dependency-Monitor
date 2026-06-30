@@ -4,10 +4,10 @@ import sys
 import signal
 from mitmproxy import options
 from mitmproxy.tools.dump import DumpMaster
-from moniter import APIDependencyMonitor
+from src.moniter import APIDependencyMonitor
 from dotenv import load_dotenv
 
-from registration import Registration
+from src.registration import Registration
 
 
 
