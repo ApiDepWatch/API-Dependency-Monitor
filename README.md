@@ -17,14 +17,16 @@ A GitHub Action that intercepts every outbound HTTP and HTTPS request your integ
 - [Reading the output](#reading-the-output)
 - [How traffic interception works](#how-traffic-interception-works)
 - [Technical Demo](#technical-demo)
+  - [Notification Workflow Demo](#notification-workflow-demo)
+  - [Provider Setup Walkthrough](#provider-setup-walkthrough)
+  - [Consumer Setup Walkthrough](#consumer-setup-walkthrough)
 
 ---
 
-## Technical Demo
+## Introduction to the Service
 
-Watch a full walkthrough of how the action works in a real CI pipeline:
 
-[![API Dependency Monitor Demo](https://img.youtube.com/vi/MzkYNd5_HZs/0.jpg)](https://youtu.be/MzkYNd5_HZs)
+[![API Dependency Monitor Introduction](https://img.youtube.com/vi/MzkYNd5_HZs/0.jpg)](https://youtu.be/O_qeYDQlYuY)
 
 ---
 
@@ -89,7 +91,9 @@ In your repository go to **Settings → Secrets and variables → Actions → Va
 
 See the [workflow example below](#adding-the-action-to-your-workflow).
 
+#### Provider Setup Walkthrough
 
+[![Provider Setup Walkthrough](https://img.youtube.com/vi/6zUO6HtOmZI/0.jpg)](https://youtu.be/6zUO6HtOmZI)
 
 ### Consumer Setup — You call someone else's API
 
@@ -112,6 +116,10 @@ In your repository go to **Settings → Secrets and variables → Actions → Va
 **Step 3 — Add the action to your workflow**
 
 See the [workflow example below](#adding-the-action-to-your-workflow).
+
+#### Consumer Setup Walkthrough
+
+[![Consumer Setup Walkthrough](https://img.youtube.com/vi/EpsmUH8ejAI/0.jpg)](https://youtu.be/EpsmUH8ejAI)
 
 ---
 
@@ -187,3 +195,21 @@ HTTPS_PROXY=http://localhost:8080
 These are respected automatically by virtually every HTTP client — curl, Python requests, npm, wget, and most language-level HTTP libraries — so all outbound traffic from your subsequent steps flows through the proxy without any code changes on your end.
 
 The action also installs the mitmproxy CA certificate into the system trust store so HTTPS connections can be intercepted and read without TLS errors.
+
+---
+
+## Technical Demo
+
+### Notification Workflow Demo
+
+See how a pipeline notifies you when a provider has updated their API spec and your requests no longer match it.
+
+[![Notification Workflow Demo](https://img.youtube.com/vi/057Oaetbubc/0.jpg)](https://youtu.be/057Oaetbubc)
+
+### Provider Setup Walkthrough
+
+[![Provider Setup Walkthrough](https://img.youtube.com/vi/6zUO6HtOmZI/0.jpg)](https://youtu.be/6zUO6HtOmZI)
+
+### Consumer Setup Walkthrough
+
+[![Consumer Setup Walkthrough](https://img.youtube.com/vi/EpsmUH8ejAI/0.jpg)](https://youtu.be/EpsmUH8ejAI)
