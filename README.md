@@ -16,6 +16,15 @@ A GitHub Action that intercepts every outbound HTTP and HTTPS request your integ
   - [Adding the action to your workflow](#adding-the-action-to-your-workflow)
 - [Reading the output](#reading-the-output)
 - [How traffic interception works](#how-traffic-interception-works)
+- [Technical Demo](#technical-demo)
+
+---
+
+## Technical Demo
+
+Watch a full walkthrough of how the action works in a real CI pipeline:
+
+[![API Dependency Monitor Demo](https://img.youtube.com/vi/MzkYNd5_HZs/0.jpg)](https://youtu.be/MzkYNd5_HZs)
 
 ---
 
