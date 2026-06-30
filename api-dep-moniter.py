@@ -56,20 +56,19 @@ def parse_args_and_run():
     project_name = os.getenv("REPO_NAME")
     
     
+    pid = os.getpid()
+    with open("moniter_pid.txt", "w") as f:
+        f.write(str(pid))
+
     registration = Registration(
-        org_id=org_id, 
-        project_name=project_name, 
-        org_name=org_name, 
-        user_id=user_id, 
+        org_id=org_id,
+        project_name=project_name,
+        org_name=org_name,
+        user_id=user_id,
         username=username
     )
 
     registration.registar_repository()
-    
-
-    pid = os.getpid()
-    with open("moniter_pid.txt", "w") as f:
-        f.write(str(pid))
 
     asyncio.run(
         start_proxy_and_monitor_traffic(
