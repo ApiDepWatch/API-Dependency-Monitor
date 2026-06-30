@@ -14,7 +14,7 @@ class Registration:
 
 
     def registar_repository(self):
-        if self.spec_path == "":
+        if not self.spec_path:
             print("Registering consumer repository with backend...")
             self.registar_consumer_repository_with_backend()
         else:
